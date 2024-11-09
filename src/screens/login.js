@@ -12,7 +12,7 @@ const Login = () => {
         >
             <View style={styles.container}>
             <View style={styles.topContainer}>
-            <Text style={{fontSize: 60, fontWeight: 'bold', color: '#F3FA12'}}>GeoSquad</Text>
+                <Text style={{fontSize: 60, fontWeight: 'bold', color: '#F3FA12'}}>GeoSquad</Text>
             </View>
                 <View style={styles.middleContainer}>
                     <Text style={{alignSelf:'flex-start', paddingLeft: 45, color: 'white', fontSize: 15}}>Credentials</Text>
