@@ -2,7 +2,7 @@ import React from "react";
 import {View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 
-const Login = () => {
+const Login = (props) => {
     return (
         <LinearGradient
             colors={['#5377AE', '#4C6EA0', '#4A6B9C', '#364E72', '#223148']} 
@@ -12,7 +12,7 @@ const Login = () => {
         >
             <View style={styles.container}>
             <View style={styles.topContainer}>
-                <Text style={{fontSize: 60, fontWeight: 'bold', color: '#F3FA12'}}>GeoSquad</Text>
+                <Text style={{paddingTop: 50, fontSize: 60, fontWeight: 'bold', color: '#F3FA12'}}>GeoSquad</Text>
             </View>
                 <View style={styles.middleContainer}>
                     <Text style={{alignSelf:'flex-start', paddingLeft: 45, color: 'white', fontSize: 15}}>Credentials</Text>
@@ -26,7 +26,7 @@ const Login = () => {
                         placeholder="PASSWORD"
                         autoCorrect={false}
                     />
-                    <TouchableOpacity style={styles.loginButton}>
+                    <TouchableOpacity style={styles.loginButton} onPress={() => {props.navigation.navigate("Map")}}>
                         <Text style={{color: "white", fontSize: 15}}>LOG IN</Text>
                     </TouchableOpacity>
                     <View style={{flexDirection:'row', gap: 10, alignSelf: 'flex-start', paddingLeft: 45}}>
@@ -39,7 +39,7 @@ const Login = () => {
                     </View>
                 </View>
             
-                <TouchableOpacity style={{alignSelf:'flex-start', paddingLeft: 45, paddingBottom: 40}}>
+                <TouchableOpacity style={{alignSelf:'flex-start', paddingLeft: 45, paddingBottom: 40}} onPress={() => {props.navigation.navigate("AboutUsScreen")}}>
                     <Text style={{color:'white'}}>
                         About Us
                     </Text>
@@ -87,5 +87,11 @@ const styles = StyleSheet.create({
         gap: 20,
       },
 })
+
+Login.navigationOptions = () => {
+    return {
+        headerShown: false,
+    }
+}
 
 export default Login;

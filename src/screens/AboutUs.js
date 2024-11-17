@@ -54,5 +54,11 @@ const styles = StyleSheet.create({
     }
 })
 
+// AboutUs.navigationOptions = () => {
+//     return {
+//         headerShown: true,
+//     }
+// }
+
 
 export default AboutUs
