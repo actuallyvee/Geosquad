@@ -12,7 +12,7 @@ const SquadCreator = () => {
     >
       <View style={styles.container}>
         <View style={styles.topContainer}>
-          <Text style={styles.title}>Squad Creator</Text>
+          <Text style={styles.title}>Squad</Text>
         </View>
       </View>
     </LinearGradient>

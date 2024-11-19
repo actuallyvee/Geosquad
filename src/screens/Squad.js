@@ -12,7 +12,7 @@ const SquadScreen = () => {
     >
       <View style={styles.container}>
         <View style={styles.topContainer}>
-          <Text style={styles.title}>Squad Screen</Text>
+          <Text style={styles.title}>Squad</Text>
         </View>
       </View>
     </LinearGradient>
@@ -25,16 +25,18 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   topContainer: {
     alignItems: "center",
+    paddingTop: 80,
   },
   title: {
     fontSize: 40,
     fontWeight: "bold",
     color: "#F3FA12",
+    alignSelf: 'flex-start',
+    marginLeft: 30,
+    
   },
 });
 

@@ -1,8 +1,8 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-const ProfileScreen = () => {
+const SettingsScreen = () => {
   return (
     <LinearGradient
       colors={["#5377AE", "#4C6EA0", "#4A6B9C", "#364E72", "#223148"]}
@@ -12,12 +12,7 @@ const ProfileScreen = () => {
     >
       <View style={styles.container}>
         <View style={styles.topContainer}>
-          <Text style={styles.title}>Profile</Text>
-        </View>
-
-        <View style={styles.profileContainer}>
-          <View style={styles.imagePlaceholder} />
-          <Text style={styles.name}>Your Name</Text>
+          <Text style={styles.title}>Settings</Text>
         </View>
       </View>
     </LinearGradient>
@@ -39,27 +34,10 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: "bold",
     color: "#F3FA12",
+    alignSelf: 'flex-start',
     marginLeft: 30,
-    alignSelf: 'flex-start'
-  },
-  profileContainer: {
-    alignItems: "center",
-    marginTop: 50,
-  },
-  imagePlaceholder: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    backgroundColor: "#ccc",
-    borderWidth: 2,
-    borderColor: "#F3FA12",
-  },
-  name: {
-    marginTop: 20,
-    fontSize: 24,
-    color: "white",
-    fontWeight: "bold",
+    
   },
 });
 
-export default ProfileScreen;
+export default SettingsScreen;

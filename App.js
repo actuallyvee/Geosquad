@@ -11,6 +11,9 @@ import profile from "./assets/profile.png"
 import LoginScreen from './src/screens/Login';
 import AboutUsScreen from './src/screens/AboutUs';
 import MapScreen from './src/screens/Map';
+import ProfileScreen from './src/screens/Profile'
+import SquadScreen from './src/screens/Squad'
+import SettingsScreen from './src/screens/Settings';
 
 const switchNavigator = createSwitchNavigator({
     loginFlow: createStackNavigator({
@@ -19,7 +22,7 @@ const switchNavigator = createSwitchNavigator({
     }),
     mainFlow: createMaterialBottomTabNavigator({
       Settings: {
-          screen: AboutUsScreen,
+          screen: SettingsScreen,
           navigationOptions: {
             tabBarIcon: ({ color }) => <Icon name="cog" color={color} size={26} />,
           },
@@ -31,13 +34,13 @@ const switchNavigator = createSwitchNavigator({
           },
       },
       Squad: {
-          screen: AboutUsScreen,
+          screen: SquadScreen,
           navigationOptions: {
             tabBarIcon: ({ color }) => <Icon name="account-group" color={color} size={24} />,
           },
       },
       Account: {
-          screen: AboutUsScreen,
+          screen: ProfileScreen,
           navigationOptions: {
             tabBarIcon: ({ color }) => <Icon name="account" color={color} size={24} />,
           },
