@@ -74,7 +74,7 @@ const RegistrationScreen = () => {
       style={styles.background}
     >
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Registeration</Text>
+        <Text style={styles.title}>Register</Text>
 
         {/* First Name Input */}
         <TextInput
@@ -210,8 +210,9 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: "bold",
     color: "#F3FA12",
+    alignSelf: 'flex-start',
+    marginLeft: 30,
     marginBottom: 30,
-    alignSelf: "center",
   },
   input: {
     backgroundColor: "#A3D132",
