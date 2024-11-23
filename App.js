@@ -8,7 +8,7 @@ import settings from "./assets/settings.png"
 import map from "./assets/map.png"
 import squad from "./assets/squad.png"
 import profile from "./assets/profile.png"
-import LoginScreen from './src/screens/Login';
+import LoginScreen from './src/screens/login';
 import AboutUsScreen from './src/screens/AboutUs';
 import MapScreen from './src/screens/Map';
 import ProfileScreen from './src/screens/Profile'
