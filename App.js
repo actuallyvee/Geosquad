@@ -14,11 +14,17 @@ import MapScreen from './src/screens/Map';
 import ProfileScreen from './src/screens/Profile'
 import SquadScreen from './src/screens/Squad'
 import SettingsScreen from './src/screens/Settings';
+import RegistrationScreen from './src/screens/Registration';
+import {Provider as AuthProvider} from './src/context/AuthContext'
+import { setNavigator } from './src/utils/navigationRef';
+import ResolveAuthScreen from './src/screens/ResolveAuthScreen';
 
 const switchNavigator = createSwitchNavigator({
+    ResolveAuthScreen: ResolveAuthScreen,
     loginFlow: createStackNavigator({
       SignUp: LoginScreen,
       AboutUsScreen: AboutUsScreen,
+      RegistrationScreen: RegistrationScreen,
     }),
     mainFlow: createMaterialBottomTabNavigator({
       Settings: {
@@ -58,4 +64,12 @@ const switchNavigator = createSwitchNavigator({
 
 });
 
-export default createAppContainer(switchNavigator);
+const App = createAppContainer(switchNavigator);
+
+export default () => {
+  return (
+    <AuthProvider>
+      <App ref={(navigator) => {setNavigator(navigator)}}/>
+    </AuthProvider>
+  )
+}

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import DropDownPicker from "react-native-dropdown-picker";
+import {Context as AuthContext} from '../context/AuthContext'
 
-const RegistrationScreen = () => {
+const RegistrationScreen = (props) => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -21,10 +22,15 @@ const RegistrationScreen = () => {
   const [userTypeOpen, setUserTypeOpen] = useState(false);
 
   const handleInputChange = (field, value) => {
-    setFormData({ ...formData, [field]: value });
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [field]: value,
+    }));
   };
 
-  const handleSubmit = () => {
+  const {state, signup} = useContext(AuthContext)
+
+  const handleSubmit = async () => {
     const {
       firstName,
       lastName,
@@ -59,12 +65,37 @@ const RegistrationScreen = () => {
       return;
     }
 
-    if (userType === "creator") {
-      Alert.alert("Success", `Thank you for registering, Creator ${firstName}! Head to your squad!`);
-    } else if (userType === "user") {
-      Alert.alert("Success", `Thank you for joining, User ${firstName}! Head to your squad!`);
+    try {
+      await signup({ email, password })
+      if (userType === "creator") {
+        Alert.alert(
+          "Success",
+          `Thank you for registering, Creator ${firstName}! Head to your squad!`,
+          [
+            {
+              text: "OK",
+              onPress: () => props.navigation.navigate('Squad'), 
+            },
+          ]
+        );
+      } else if (userType === "user") {
+        Alert.alert(
+          "Success",
+          `Thank you for joining, User ${firstName}! Head to your squad!`,
+          [
+            {
+              text: "OK",
+              onPress: () => props.navigation.navigate('Squad'),
+            },
+          ]
+        );
+      }
+    } catch (error) {
+      Alert.alert("Error", error.message || "Signup failed, please try again.");
     }
-  };
+  }
+
+  
 
   return (
     <LinearGradient
@@ -73,7 +104,7 @@ const RegistrationScreen = () => {
       end={{ x: 1, y: 1 }}
       style={styles.background}
     >
-      <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.container}>
         <Text style={styles.title}>Register</Text>
 
         {/* First Name Input */}
@@ -123,7 +154,9 @@ const RegistrationScreen = () => {
             { label: "Other", value: "other" },
           ]}
           setOpen={setGenderOpen}
-          setValue={(value) => handleInputChange("gender", value)}
+          onSelectItem={(item) => {
+            handleInputChange("gender", item.value)
+          }}
           placeholder="Select Gender"
           placeholderStyle={{ color: "#364E72" }}
           style={styles.dropdown}
@@ -179,7 +212,9 @@ const RegistrationScreen = () => {
             { label: "Regular Member", value: "user" },
           ]}
           setOpen={setUserTypeOpen}
-          setValue={(value) => handleInputChange("userType", value)}
+          onSelectItem={(item) => {
+            handleInputChange("userType", item.value)
+          }}
           placeholder="Select User Type"
           placeholderStyle={{ color: "#364E72" }}
           style={styles.dropdown}
@@ -187,11 +222,11 @@ const RegistrationScreen = () => {
           dropDownContainerStyle={styles.dropdownContainer}
         />
 
-        {/* Submit Button */}
+        {/* Submit Button  handleSubmit */}
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitText}>Submit</Text>
         </TouchableOpacity>
-      </ScrollView>
+      </View>
     </LinearGradient>
   );
 };
@@ -201,18 +236,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    flexGrow: 1,
+    flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 40,
+    marginHorizontal: 20,
+    marginBottom: 20,
   },
   title: {
     fontSize: 40,
     fontWeight: "bold",
     color: "#F3FA12",
     alignSelf: 'flex-start',
-    marginLeft: 30,
-    marginBottom: 30,
+    marginBottom: 20,
   },
   input: {
     backgroundColor: "#A3D132",

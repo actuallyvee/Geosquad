@@ -1,8 +1,38 @@
-import React from "react";
-import {View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native'
+import React, {useContext, useState, useEffect} from "react";
+import {View, Text, StyleSheet, TextInput, TouchableOpacity, Alert} from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
+import {Context as AuthContext} from '../context/AuthContext'
 
 const Login = (props) => {
+    const {state, signin} = useContext(AuthContext)
+
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+        
+    });
+
+    const handleInputChange = (field, value) => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [field]: value,
+        }));
+    };
+
+    const handleSubmit = async () => {
+        const {
+            email,
+            password,
+        } = formData;
+
+        try {
+            await signin({ email, password })
+        } catch (error) {
+            Alert.alert("Error", error.message || "Signin failed, please try again.");
+        }
+    }
+
+
     return (
         <LinearGradient
             colors={['#5377AE', '#4C6EA0', '#4A6B9C', '#364E72', '#223148']} 
@@ -17,23 +47,30 @@ const Login = (props) => {
                 <View style={styles.middleContainer}>
                     <Text style={{alignSelf:'flex-start', paddingLeft: 45, color: 'white', fontSize: 15}}>Credentials</Text>
                     <TextInput
-                        style={styles.textInput}
+                        style={styles.input}
                         placeholder="USERNAME"
+                        placeholderTextColor="#364E72"
+                        onChangeText={(value) => handleInputChange("email", value)}
+                        value={formData.firstName}
                         autoCorrect={false}
                     />
                     <TextInput
-                        style={styles.textInput}
+                        style={styles.input}
                         placeholder="PASSWORD"
+                        placeholderTextColor="#364E72"
+                        onChangeText={(value) => handleInputChange("password", value)}
+                        secureTextEntry
+                        value={formData.lastName}
                         autoCorrect={false}
                     />
-                    <TouchableOpacity style={styles.loginButton} onPress={() => {props.navigation.navigate("Map")}}>
+                    <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
                         <Text style={{color: "white", fontSize: 15}}>LOG IN</Text>
                     </TouchableOpacity>
                     <View style={{flexDirection:'row', gap: 10, alignSelf: 'flex-start', paddingLeft: 45}}>
                         <Text style={{color:'white'}}>
                             Don't have an account?
                         </Text>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => {props.navigation.navigate("RegistrationScreen")}}>
                             <Text style={{color: "#A6D941",textDecorationLine: 'underline'}}>Create Account</Text>
                         </TouchableOpacity>
                     </View>
@@ -55,13 +92,14 @@ const styles = StyleSheet.create({
     background: {
         flex: 1,
       },
-    textInput: {
-        width: "80%",
-        height: 50,
-        borderColor: "white",
-        borderWidth: 1,
-        color: "white",
-        backgroundColor: "#A6D941",
+    input: {
+        width: "80%", 
+        backgroundColor: "#A3D132",
+        borderRadius: 5,
+        padding: 15,
+        marginBottom: 20,
+        fontSize: 16,
+        color: "#223148",
     },
     loginButton: {
         width: "80%",
