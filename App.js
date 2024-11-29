@@ -16,6 +16,7 @@ import SquadScreen from './src/screens/Squad'
 import SettingsScreen from './src/screens/Settings';
 import RegistrationScreen from './src/screens/Registration';
 import {Provider as AuthProvider} from './src/context/AuthContext'
+import {Provider as DataProvider} from './src/context/DataContext'
 import { setNavigator } from './src/utils/navigationRef';
 import ResolveAuthScreen from './src/screens/ResolveAuthScreen';
 
@@ -69,7 +70,9 @@ const App = createAppContainer(switchNavigator);
 export default () => {
   return (
     <AuthProvider>
-      <App ref={(navigator) => {setNavigator(navigator)}}/>
+      <DataProvider>
+        <App ref={(navigator) => {setNavigator(navigator)}}/>
+      </DataProvider>
     </AuthProvider>
   )
 }
