@@ -20,7 +20,6 @@ const fetchData = (dispatch) => {
             });
             dispatch({ type: "fetchData", payload: {user: userResponse.data, squad: squadResponse.data}})
         } catch (err) {
-            console.log(err)
             dispatch({
                 type: "add_error",
                 payload: "Something went wrong with fetching",

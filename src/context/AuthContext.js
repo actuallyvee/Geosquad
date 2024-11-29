@@ -45,6 +45,7 @@ const signin = (dispatch) => {
           callback()
           navigate("Map")
         } catch (err) {
+          console.log(err)
           dispatch({
             type: "add_error",
             payload: "Something went wrong with sign in",
