@@ -18,13 +18,13 @@ const authReducer = (state, action) => {
 }
 
 const signup = (dispatch) => {
-    return async ({ email, password }) => {
+    return async ({ email, password ,firstName, lastName, age, dob, gender, location, userType, squad}, callback) => {
       try {
-        const response = await trackerApi.post("/signup", { email, password });
+        const response = await trackerApi.post("/signup", { email, password ,firstName, lastName, age, dob, gender, location, userType, squad});
         dispatch({ type: "signup" , payload: response.data.token})
+        callback()
         await AsyncStorage.setItem('token', response.data.token)
       } catch (err) {
-        console.log("ERROR")
         dispatch({
           type: "add_error",
           payload: "Something went wrong with signup",
@@ -37,13 +37,15 @@ const signup = (dispatch) => {
   };
 
 const signin = (dispatch) => {
-    return async ({ email, password }) => {
+    return async ({ email, password }, callback) => {
         try {
           const response = await trackerApi.post("/signin", { email, password });
           await AsyncStorage.setItem('token', response.data.token)
           dispatch({ type: "sign_in" , payload: response.data.token})
+          callback()
           navigate("Map")
         } catch (err) {
+          console.log(err)
           dispatch({
             type: "add_error",
             payload: "Something went wrong with sign in",
@@ -65,8 +67,6 @@ const tryLocalSignin = (dispatch) => {
         }
     }
 }
-
-
 
 const signout = (dispatch) => {
     return async () => {

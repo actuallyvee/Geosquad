@@ -1,8 +1,11 @@
-import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import React, {useEffect, useContext} from "react";
+import { View, Text, StyleSheet, Image, Button } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import {Context as DataContext} from '../context/DataContext'
 
 const ProfileScreen = () => {
+  const {state} = useContext(DataContext)
+
   return (
     <LinearGradient
       colors={["#5377AE", "#4C6EA0", "#4A6B9C", "#364E72", "#223148"]}
@@ -17,7 +20,7 @@ const ProfileScreen = () => {
 
         <View style={styles.profileContainer}>
           <View style={styles.imagePlaceholder} />
-          <Text style={styles.name}>Your Name</Text>
+          <Text style={styles.name}>{state.user.firstName} {state.user.lastName}</Text>
         </View>
       </View>
     </LinearGradient>

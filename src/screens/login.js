@@ -2,9 +2,11 @@ import React, {useContext, useState, useEffect} from "react";
 import {View, Text, StyleSheet, TextInput, TouchableOpacity, Alert} from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import {Context as AuthContext} from '../context/AuthContext'
+import {Context as DataContext} from '../context/DataContext'
 
 const Login = (props) => {
-    const {state, signin} = useContext(AuthContext)
+    const {authState, signin} = useContext(AuthContext)
+    const {fetchData} = useContext(DataContext)
 
     const [formData, setFormData] = useState({
         email: "",
@@ -26,7 +28,7 @@ const Login = (props) => {
         } = formData;
 
         try {
-            await signin({ email, password })
+            await signin({ email, password },fetchData)
         } catch (error) {
             Alert.alert("Error", error.message || "Signin failed, please try again.");
         }
