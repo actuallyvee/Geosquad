@@ -63,11 +63,11 @@ const MapScreen = () => {
   }
 
 
-  const getIcon = (type) =>  activateIcon[type];
+  const getIcon = (type) =>  activateMarker[type]; //name change for clarity
 
  
 
-  const activateIcon = {
+  const activateMarker = {
   waterwell: require('../../assets/waterwell.png'),
   disaster: require('../../assets/warning.png'),
   medicalStation: require('../../assets/medicalStation.png'),
@@ -94,14 +94,15 @@ const MapScreen = () => {
           title={"Your Location"}
           description={"This is your current location"}
         />
-        {Object.entries(markers).map(([type, coords]) => 
-          coords && (
+        
+        {Object.entries(markers).map(([type, coords]) => //loop destructuring if coords (valid/not null) the marker renders
+          coords && (  
             <Marker
             key={type}
             coordinate={coords}
-            title={type} 
-            description={`This is a ${type}`} 
-            image={getIcon(type)} // Add the image dynamically
+            title={type} //optional
+            description={`This is a ${type}`}  //not necessary can be removed . 
+            image={getIcon(type)} // activate marker
 
           />
           )
