@@ -63,16 +63,11 @@ const MapScreen = () => {
   }
 
 
-  const getIcon = (type) => (markers[type] ? activeIcons[type] : defaultIcons[type]);
+  const getIcon = (type) =>  activateIcon[type];
 
-  const defaultIcons = {
-  waterwell: waterwell,
-  disaster: warning,
-  medicalStation: medicalStation,
-  safe: safe
-  };
+ 
 
-  const activeIcons = {
+  const activateIcon = {
   waterwell: require('../../assets/waterwell.png'),
   disaster: require('../../assets/warning.png'),
   medicalStation: require('../../assets/medicalStation.png'),
