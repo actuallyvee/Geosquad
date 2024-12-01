@@ -5,7 +5,7 @@ import {Text, View, TouchableOpacity, StyleSheet, Image} from 'react-native'
 const MapButton = (props) => {
 
     return(
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={props.onPress}>
             <View style={{height: "100%",backgroundColor: 'white', borderWidth: 1, borderColor: "black", paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10}}>
                 <Image style={{left: 5, marginLeft: 10}} source={props.icon}/>
                 <Text style={{fontSize: 10, textAlign: 'center', flexWrap: 'wrap', width: 90}}>{props.title}</Text>
