@@ -13,6 +13,7 @@ import {Context as DataContext} from '../context/DataContext'
 const MapScreen = () => {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
+
   const [filterVisible, setFilterVisible] = useState(false);
   const [filterSettings, setFilterSettings] = useState({
     waterwell: true,
@@ -21,7 +22,7 @@ const MapScreen = () => {
     safe: true
   });
   const {state, addEntry, fetchEntries, removeEntry} = useContext(DataContext)
-
+  
   useEffect(() => {
     const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -82,10 +83,10 @@ const MapScreen = () => {
   const getIcon = (type) =>  activateMarker[type]; 
 
   const activateMarker = {
-  waterwell: require('../../assets/waterwell.png'),
-  disaster: require('../../assets/warning.png'),
-  medicalStation: require('../../assets/medicalStation.png'),
-  safe: require('../../assets/safe.png'),
+    waterwell: require('../../assets/waterwell.png'),
+    disaster: require('../../assets/warning.png'),
+    medicalStation: require('../../assets/medicalStation.png'),
+    safe: require('../../assets/safe.png'),
   };
 
   return (
@@ -144,12 +145,14 @@ const MapScreen = () => {
       )}
 
       </MapView>
+
       <View style={{ position: 'absolute', top: 50, right: 10 }}>
         <MapButton
           title="FILTER"
           icon={filter}
           onPress={() => setFilterVisible(!filterVisible)}
         />
+
         {filterVisible && (
           <View style={styles.dropdown}>
             {Object.keys(filterSettings).map((type) => (
@@ -173,11 +176,12 @@ const MapScreen = () => {
           </View>
         )}
       </View>
-      <View style={{position: 'absolute', bottom: 20, right: 10, gap: 10}}>
-        <MapButton title="ADD WATERWELL" icon={waterwell} onPress={()=> toggleMarker('waterwell')}/>
-        <MapButton title="MARK DISASTER ZONE" icon={warning} onPress={()=> toggleMarker('disaster')}/>
-        <MapButton title="ADD MEDICAL STATION" icon={medicalStation} onPress={()=> toggleMarker('medicalStation')}/>
-        <MapButton style={{bottom: 100}} title="MARK AS SAFE" icon={safe} onPress={()=> toggleMarker('safe')}/>
+
+      <View style={{ position: 'absolute', bottom: 20, right: 10, gap: 10 }}>
+        <MapButton title="ADD WATERWELL" icon={waterwell} onPress={() => toggleMarker('waterwell')} />
+        <MapButton title="MARK DISASTER ZONE" icon={warning} onPress={() => toggleMarker('disaster')} />
+        <MapButton title="ADD MEDICAL STATION" icon={medicalStation} onPress={() => toggleMarker('medicalStation')} />
+        <MapButton title="MARK AS SAFE" icon={safe} onPress={() => toggleMarker('safe')} />
       </View>
     </View>
   );
@@ -220,5 +224,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+  // End Filter Style
 
 export default MapScreen;
