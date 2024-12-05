@@ -116,7 +116,6 @@ const MapScreen = () => {
 
 
       </MapView>
-
       {/* Filter Button */}
       <View style={{ position: 'absolute', top: 50, right: 10 }}>
         <MapButton
@@ -175,7 +174,6 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
   },
-
   // Style For Filter
   dropdown: {
     backgroundColor: 'white',
