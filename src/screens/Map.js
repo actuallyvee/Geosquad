@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, Button, TouchableOpacity, Modal, Switch } from 'react-native';
+import { View, StyleSheet, Text, Button, TouchableOpacity, Switch } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import MapButton from '../components/MapButton';
@@ -13,7 +13,6 @@ const MapScreen = () => {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   
-  //sabdalah - 11/30/2024 added to create a toggle feature for buttons
   const [markers, setMarkers] = useState({
     waterwell: null,
     disasterZone: null,
@@ -117,47 +116,54 @@ const MapScreen = () => {
 
 
       </MapView>
-      <View style={{position: 'absolute', top: 50, right: 10, gap: 10 }}>
-        <MapButton title="FILTER" icon={filter} onPress={() => {
-          console.log("Filter button pressed!");
-          setFilterVisible(true);
-        }} />
-        
+
+      {/* Filter Button */}
+      <View style={{ position: 'absolute', top: 50, right: 10 }}>
+        <MapButton
+          title="FILTER"
+          icon={filter}
+          onPress={() => setFilterVisible(!filterVisible)}
+        />
+        {/* Dropdown Menu */}
+        {filterVisible && (
+          <View style={styles.dropdown}>
+            {Object.keys(filterSettings).map((type) => (
+              <View key={type} style={styles.dropdownItem}>
+                <Text style={styles.dropdownLabel}>
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </Text>
+                <Switch
+                  value={filterSettings[type]}
+                  onValueChange={() =>
+                    setFilterSettings((prevSettings) => ({
+                      ...prevSettings,
+                      [type]: !prevSettings[type],
+                    }))
+                  }
+                  /* thumbColor -> the circle color when on/off.
+                     trackColor -> false doesn't seem to change anything. True changes the background of the button. Wonder if we could add a little image in there 
+                     Green- a6d841
+                     Blue- 5978b1
+                     Yellow- e7bb2d
+                     Red- ff0d0f
+                     */
+                  thumbColor={filterSettings[type] ? "#a6d841" : "#aa1111" }
+                  trackColor={{ false: "#767577", true: "#5174aa" }}
+                  
+                />
+              </View>
+            ))}
+          </View>
+        )}
       </View>
 
+      {/* Marker Buttons */}
       <View style={{ position: 'absolute', bottom: 20, right: 10, gap: 10 }}>
         <MapButton title="ADD WATERWELL" icon={waterwell} onPress={() => toggleMarker('waterwell')} />
         <MapButton title="MARK DISASTER ZONE" icon={warning} onPress={() => toggleMarker('disaster')} />
         <MapButton title="ADD MEDICAL STATION" icon={medicalStation} onPress={() => toggleMarker('medicalStation')} />
         <MapButton title="MARK AS SAFE" icon={safe} onPress={() => toggleMarker('safe')} />
       </View>
-
-      {/* Modal for Filters */}
-      <Modal
-        visible={filterVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setFilterVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Filter Markers</Text>
-          {Object.keys(filterSettings).map((type) => (
-            <View key={type} style={styles.filterItem}>
-              <Text style={styles.filterLabel}>{type.charAt(0).toUpperCase() + type.slice(1)}</Text>
-              <Switch
-                value={filterSettings[type]}
-                onValueChange={() =>
-                  setFilterSettings((prevSettings) => ({
-                    ...prevSettings,
-                    [type]: !prevSettings[type],
-                  }))
-                }
-              />
-            </View>
-          ))}
-          <Button title="Close" onPress={() => setFilterVisible(false)} />
-        </View>
-      </Modal>
     </View>
   );
 };
@@ -171,39 +177,30 @@ const styles = StyleSheet.create({
   },
 
   // Style For Filter
-  modalContainer: {
+  dropdown: {
     backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 10,
-    width: '80%', // Set a fixed width relative to the screen
-    alignSelf: 'center', // Center horizontally
-    justifyContent: 'center',
-    alignItems: 'center',
-    maxHeight: '50%', // Limit height to half the screen
-    elevation: 5, // Add shadow
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 }, 
-    shadowOpacity: 0.3, 
+    borderRadius: 8,
+    padding: 10,
+    position: 'absolute',
+    top: 90,
+    right: 0,
+    width: 200,
+    elevation: 5, // For Android shadow
+    shadowColor: '#000', // For iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
     shadowRadius: 4,
-    marginTop: 138
   },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  filterItem: {
+  dropdownItem: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
     justifyContent: 'space-between',
-    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 8,
   },
-  filterLabel: {
+  dropdownLabel: {
     fontSize: 16,
-  }
-  // End Filter Style
-
+  },
 });
+  // End Filter Style
 
 export default MapScreen;
