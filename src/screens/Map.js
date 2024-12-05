@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, Button, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, Button, TouchableOpacity, Switch } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import MapButton from '../components/MapButton';
@@ -13,7 +13,6 @@ const MapScreen = () => {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   
-  //sabdalah - 11/30/2024 added to create a toggle feature for buttons
   const [markers, setMarkers] = useState({
     waterwell: null,
     disasterZone: null,
@@ -21,6 +20,12 @@ const MapScreen = () => {
     safe: null,
   });
 
+  const [filterVisible, setFilterVisible] = useState(false);
+  const [filterSettings, setFilterSettings] = useState({
+    waterwell: true,
+    disaster: true,
+    medicalStation: true,
+  });
 
   useEffect(() => {
     const getLocation = async () => {
@@ -68,10 +73,10 @@ const MapScreen = () => {
  
 
   const activateMarker = {
-  waterwell: require('../../assets/waterwell.png'),
-  disaster: require('../../assets/warning.png'),
-  medicalStation: require('../../assets/medicalStation.png'),
-  safe: require('../../assets/safe.png'),
+    waterwell: require('../../assets/waterwell.png'),
+    disaster: require('../../assets/warning.png'),
+    medicalStation: require('../../assets/medicalStation.png'),
+    safe: require('../../assets/safe.png'),
   };
 
 
@@ -96,7 +101,8 @@ const MapScreen = () => {
         />
         
         {Object.entries(markers).map(([type, coords]) => //loop destructuring if coords (valid/not null) the marker renders
-          coords && (  
+          coords 
+          && filterSettings[type] && ( //Check filter settings  
             <Marker
             key={type}
             coordinate={coords}
@@ -110,14 +116,52 @@ const MapScreen = () => {
 
 
       </MapView>
-      <View style={{position: 'absolute', top: 50, right: 10, gap: 10}}>
-        <MapButton title="FILTER" icon={filter}/>
+      {/* Filter Button */}
+      <View style={{ position: 'absolute', top: 50, right: 10 }}>
+        <MapButton
+          title="FILTER"
+          icon={filter}
+          onPress={() => setFilterVisible(!filterVisible)}
+        />
+        {/* Dropdown Menu */}
+        {filterVisible && (
+          <View style={styles.dropdown}>
+            {Object.keys(filterSettings).map((type) => (
+              <View key={type} style={styles.dropdownItem}>
+                <Text style={styles.dropdownLabel}>
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </Text>
+                <Switch
+                  value={filterSettings[type]}
+                  onValueChange={() =>
+                    setFilterSettings((prevSettings) => ({
+                      ...prevSettings,
+                      [type]: !prevSettings[type],
+                    }))
+                  }
+                  /* thumbColor -> the circle color when on/off.
+                     trackColor -> false doesn't seem to change anything. True changes the background of the button. Wonder if we could add a little image in there 
+                     Green- a6d841
+                     Blue- 5978b1
+                     Yellow- e7bb2d
+                     Red- ff0d0f
+                     */
+                  thumbColor={filterSettings[type] ? "#a6d841" : "#aa1111" }
+                  trackColor={{ false: "#767577", true: "#5174aa" }}
+                  
+                />
+              </View>
+            ))}
+          </View>
+        )}
       </View>
-      <View style={{position: 'absolute', bottom: 20, right: 10, gap: 10}}>
-        <MapButton title="ADD WATERWELL" icon={waterwell} onPress={()=> toggleMarker('waterwell')}/>
-        <MapButton title="MARK DISASTER ZONE" icon={warning} onPress={()=> toggleMarker('disaster')}/>
-        <MapButton title="ADD MEDICAL STATION" icon={medicalStation} onPress={()=> toggleMarker('medicalStation')}/>
-        <MapButton style={{bottom: 100}} title="MARK AS SAFE" icon={safe} onPress={()=> toggleMarker('safe')}/>
+
+      {/* Marker Buttons */}
+      <View style={{ position: 'absolute', bottom: 20, right: 10, gap: 10 }}>
+        <MapButton title="ADD WATERWELL" icon={waterwell} onPress={() => toggleMarker('waterwell')} />
+        <MapButton title="MARK DISASTER ZONE" icon={warning} onPress={() => toggleMarker('disaster')} />
+        <MapButton title="ADD MEDICAL STATION" icon={medicalStation} onPress={() => toggleMarker('medicalStation')} />
+        <MapButton title="MARK AS SAFE" icon={safe} onPress={() => toggleMarker('safe')} />
       </View>
     </View>
   );
@@ -130,6 +174,31 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
   },
+  // Style For Filter
+  dropdown: {
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 10,
+    position: 'absolute',
+    top: 90,
+    right: 0,
+    width: 200,
+    elevation: 5, // For Android shadow
+    shadowColor: '#000', // For iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  dropdownItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  dropdownLabel: {
+    fontSize: 16,
+  },
 });
+  // End Filter Style
 
 export default MapScreen;
