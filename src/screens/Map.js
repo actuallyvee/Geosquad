@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, Button, TouchableOpacity } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, StyleSheet, Text, Button, TouchableOpacity, Switch } from 'react-native';
+import MapView, { Marker, Callout, CalloutSubview } from 'react-native-maps';
 import * as Location from 'expo-location';
 import MapButton from '../components/MapButton';
 import safe from "../../assets/safe.png"
@@ -8,19 +8,19 @@ import filter from "../../assets/filter.png"
 import warning from "../../assets/warning.png"
 import waterwell from "../../assets/waterwell.png"
 import medicalStation from "../../assets/medicalStation.png"
+import {Context as DataContext} from '../context/DataContext'
 
 const MapScreen = () => {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
-  
-  //sabdalah - 11/30/2024 added to create a toggle feature for buttons
-  const [markers, setMarkers] = useState({
-    waterwell: null,
-    disasterZone: null,
-    medicalStation: null,
-    safe: null,
+  const [filterVisible, setFilterVisible] = useState(false);
+  const [filterSettings, setFilterSettings] = useState({
+    waterwell: true,
+    disaster: true,
+    medicalStation: true,
+    safe: true
   });
-
+  const {state, addEntry, fetchEntries, removeEntry} = useContext(DataContext)
 
   useEffect(() => {
     const getLocation = async () => {
@@ -36,22 +36,38 @@ const MapScreen = () => {
     getLocation();
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchEntries()
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const haversineDistance = (lat1, lon1, lat2, lon2) => {
+    const toRad = (x) => x * Math.PI / 180;
+    const R = 6371000; 
+    const φ1 = toRad(lat1);
+    const φ2 = toRad(lat2);
+    const Δφ = toRad(lat2 - lat1);
+    const Δλ = toRad(lon2 - lon1);
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; 
+
+    return distance;
+  };
 
   const toggleMarker = (type) => {
-    setMarkers((prevMarkers) => {
-      // If marker exists, remove it; otherwise, add the new marker
-      if (prevMarkers[type]) {
-        return { ...prevMarkers, [type]: null };
-      } else {
-        return {
-          ...prevMarkers,
-          [type]: {
-            latitude: location.latitude,
-            longitude: location.longitude,
-          },
-        };
-      }
-    });
+    const isDuplicate = state.entries.some(entry =>
+      haversineDistance(entry.latitude, entry.longitude, location.latitude, location.longitude) <= 10
+    );
+    if (isDuplicate) {
+        return; 
+    }
+    addEntry({type: type, latitude: location.latitude, longitude: location.longitude})
   };
 
   if (error) {
@@ -63,9 +79,7 @@ const MapScreen = () => {
   }
 
 
-  const getIcon = (type) =>  activateMarker[type]; //name change for clarity
-
- 
+  const getIcon = (type) =>  activateMarker[type]; 
 
   const activateMarker = {
   waterwell: require('../../assets/waterwell.png'),
@@ -73,7 +87,6 @@ const MapScreen = () => {
   medicalStation: require('../../assets/medicalStation.png'),
   safe: require('../../assets/safe.png'),
   };
-
 
   return (
     <View style={styles.container}>
@@ -94,24 +107,71 @@ const MapScreen = () => {
           title={"Your Location"}
           description={"This is your current location"}
         />
-        
-        {Object.entries(markers).map(([type, coords]) => //loop destructuring if coords (valid/not null) the marker renders
-          coords && (  
-            <Marker
-            key={type}
-            coordinate={coords}
-            title={type} //optional
-            description={`This is a ${type}`}  //not necessary can be removed . 
-            image={getIcon(type)} // activate marker
 
-          />
-          )
-        )}
-
+      {state.entries.map(({ id, latitude, longitude, type, creator, creatorID,date }) => 
+        latitude && longitude && filterSettings[type] && ( 
+          <Marker
+            key={id} 
+            coordinate={{ latitude, longitude }}  
+            title={type} 
+            image={getIcon(type)} 
+          >
+            <Callout>
+              <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
+                {state.user._id === creatorID ? 
+                  <CalloutSubview
+                  style={{
+                    width: '100%',
+                    alignItems: 'center',
+                  }}
+                  onPress={() => { 
+                    removeEntry({id}) 
+                  }}
+                >
+                  <Text style={{ color: 'red' }}>REMOVE</Text>
+                </CalloutSubview> :
+                  <View></View>
+                }
+                
+                <View style={{ paddingTop: 20, alignItems: 'center' }}>
+                  <Text>This is a {type} zone.</Text>  
+                  <Text>Marked by {creator} on {date}.</Text>  
+                </View>
+              </View>
+            </Callout>
+          </Marker>
+        )
+      )}
 
       </MapView>
-      <View style={{position: 'absolute', top: 50, right: 10, gap: 10}}>
-        <MapButton title="FILTER" icon={filter}/>
+      <View style={{ position: 'absolute', top: 50, right: 10 }}>
+        <MapButton
+          title="FILTER"
+          icon={filter}
+          onPress={() => setFilterVisible(!filterVisible)}
+        />
+        {filterVisible && (
+          <View style={styles.dropdown}>
+            {Object.keys(filterSettings).map((type) => (
+              <View key={type} style={styles.dropdownItem}>
+                <Text style={styles.dropdownLabel}>
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </Text>
+                <Switch
+                  value={filterSettings[type]}
+                  onValueChange={() =>
+                    setFilterSettings((prevSettings) => ({
+                      ...prevSettings,
+                      [type]: !prevSettings[type],
+                    }))
+                  }
+                  thumbColor={filterSettings[type] ? "#a6d841" : "#aa1111" }
+                  trackColor={{ false: "#767577", true: "#5174aa" }}
+                />
+              </View>
+            ))}
+          </View>
+        )}
       </View>
       <View style={{position: 'absolute', bottom: 20, right: 10, gap: 10}}>
         <MapButton title="ADD WATERWELL" icon={waterwell} onPress={()=> toggleMarker('waterwell')}/>
@@ -129,6 +189,35 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+  },
+  callout: {
+    width: 150,
+    padding: 10,
+    alignItems: 'center',
+    pointerEvents: 'box-none',
+  },
+  dropdown: {
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 10,
+    position: 'absolute',
+    top: 90,
+    right: 0,
+    width: 200,
+    elevation: 5, // For Android shadow
+    shadowColor: '#000', // For iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  dropdownItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  dropdownLabel: {
+    fontSize: 16,
   },
 });
 
