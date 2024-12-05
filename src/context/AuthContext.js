@@ -69,9 +69,10 @@ const tryLocalSignin = (dispatch) => {
 }
 
 const signout = (dispatch) => {
-    return async () => {
+    return async (callback) => {
       await AsyncStorage.removeItem('token')
       dispatch({type: 'signout'})
+      callback()
       navigate('loginFlow')
     }
 }

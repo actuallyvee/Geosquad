@@ -50,7 +50,7 @@ const Login = (props) => {
                     <Text style={{alignSelf:'flex-start', paddingLeft: 45, color: 'white', fontSize: 15}}>Credentials</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="USERNAME"
+                        placeholder="EMAIL"
                         placeholderTextColor="#364E72"
                         onChangeText={(value) => handleInputChange("email", value)}
                         value={formData.firstName}

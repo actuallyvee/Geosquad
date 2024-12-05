@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, StyleSheet, Text, Button, TouchableOpacity, Switch } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Callout, CalloutSubview } from 'react-native-maps';
 import * as Location from 'expo-location';
 import MapButton from '../components/MapButton';
 import safe from "../../assets/safe.png"
@@ -8,25 +8,21 @@ import filter from "../../assets/filter.png"
 import warning from "../../assets/warning.png"
 import waterwell from "../../assets/waterwell.png"
 import medicalStation from "../../assets/medicalStation.png"
+import {Context as DataContext} from '../context/DataContext'
 
 const MapScreen = () => {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
-  
-  const [markers, setMarkers] = useState({
-    waterwell: null,
-    disasterZone: null,
-    medicalStation: null,
-    safe: null,
-  });
 
   const [filterVisible, setFilterVisible] = useState(false);
   const [filterSettings, setFilterSettings] = useState({
     waterwell: true,
     disaster: true,
     medicalStation: true,
+    safe: true
   });
-
+  const {state, addEntry, fetchEntries, removeEntry} = useContext(DataContext)
+  
   useEffect(() => {
     const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -41,22 +37,38 @@ const MapScreen = () => {
     getLocation();
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchEntries()
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const haversineDistance = (lat1, lon1, lat2, lon2) => {
+    const toRad = (x) => x * Math.PI / 180;
+    const R = 6371000; 
+    const φ1 = toRad(lat1);
+    const φ2 = toRad(lat2);
+    const Δφ = toRad(lat2 - lat1);
+    const Δλ = toRad(lon2 - lon1);
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; 
+
+    return distance;
+  };
 
   const toggleMarker = (type) => {
-    setMarkers((prevMarkers) => {
-      // If marker exists, remove it; otherwise, add the new marker
-      if (prevMarkers[type]) {
-        return { ...prevMarkers, [type]: null };
-      } else {
-        return {
-          ...prevMarkers,
-          [type]: {
-            latitude: location.latitude,
-            longitude: location.longitude,
-          },
-        };
-      }
-    });
+    const isDuplicate = state.entries.some(entry =>
+      haversineDistance(entry.latitude, entry.longitude, location.latitude, location.longitude) <= 10
+    );
+    if (isDuplicate) {
+        return; 
+    }
+    addEntry({type: type, latitude: location.latitude, longitude: location.longitude})
   };
 
   if (error) {
@@ -68,9 +80,7 @@ const MapScreen = () => {
   }
 
 
-  const getIcon = (type) =>  activateMarker[type]; //name change for clarity
-
- 
+  const getIcon = (type) =>  activateMarker[type]; 
 
   const activateMarker = {
     waterwell: require('../../assets/waterwell.png'),
@@ -78,7 +88,6 @@ const MapScreen = () => {
     medicalStation: require('../../assets/medicalStation.png'),
     safe: require('../../assets/safe.png'),
   };
-
 
   return (
     <View style={styles.container}>
@@ -99,31 +108,51 @@ const MapScreen = () => {
           title={"Your Location"}
           description={"This is your current location"}
         />
-        
-        {Object.entries(markers).map(([type, coords]) => //loop destructuring if coords (valid/not null) the marker renders
-          coords 
-          && filterSettings[type] && ( //Check filter settings  
-            <Marker
-            key={type}
-            coordinate={coords}
-            title={type} //optional
-            description={`This is a ${type}`}  //not necessary can be removed . 
-            image={getIcon(type)} // activate marker
 
-          />
-          )
-        )}
-
+      {state.entries.map(({ id, latitude, longitude, type, creator, creatorID,date }) => 
+        latitude && longitude && filterSettings[type] && ( 
+          <Marker
+            key={id} 
+            coordinate={{ latitude, longitude }}  
+            title={type} 
+            image={getIcon(type)} 
+          >
+            <Callout>
+              <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
+                {state.user._id === creatorID ? 
+                  <CalloutSubview
+                  style={{
+                    width: '100%',
+                    alignItems: 'center',
+                  }}
+                  onPress={() => { 
+                    removeEntry({id}) 
+                  }}
+                >
+                  <Text style={{ color: 'red' }}>REMOVE</Text>
+                </CalloutSubview> :
+                  <View></View>
+                }
+                
+                <View style={{ paddingTop: 20, alignItems: 'center' }}>
+                  <Text>This is a {type} zone.</Text>  
+                  <Text>Marked by {creator} on {date}.</Text>  
+                </View>
+              </View>
+            </Callout>
+          </Marker>
+        )
+      )}
 
       </MapView>
-      {/* Filter Button */}
+
       <View style={{ position: 'absolute', top: 50, right: 10 }}>
         <MapButton
           title="FILTER"
           icon={filter}
           onPress={() => setFilterVisible(!filterVisible)}
         />
-        {/* Dropdown Menu */}
+
         {filterVisible && (
           <View style={styles.dropdown}>
             {Object.keys(filterSettings).map((type) => (
@@ -139,16 +168,8 @@ const MapScreen = () => {
                       [type]: !prevSettings[type],
                     }))
                   }
-                  /* thumbColor -> the circle color when on/off.
-                     trackColor -> false doesn't seem to change anything. True changes the background of the button. Wonder if we could add a little image in there 
-                     Green- a6d841
-                     Blue- 5978b1
-                     Yellow- e7bb2d
-                     Red- ff0d0f
-                     */
                   thumbColor={filterSettings[type] ? "#a6d841" : "#aa1111" }
                   trackColor={{ false: "#767577", true: "#5174aa" }}
-                  
                 />
               </View>
             ))}
@@ -156,7 +177,6 @@ const MapScreen = () => {
         )}
       </View>
 
-      {/* Marker Buttons */}
       <View style={{ position: 'absolute', bottom: 20, right: 10, gap: 10 }}>
         <MapButton title="ADD WATERWELL" icon={waterwell} onPress={() => toggleMarker('waterwell')} />
         <MapButton title="MARK DISASTER ZONE" icon={warning} onPress={() => toggleMarker('disaster')} />
@@ -174,7 +194,12 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
   },
-  // Style For Filter
+  callout: {
+    width: 150,
+    padding: 10,
+    alignItems: 'center',
+    pointerEvents: 'box-none',
+  },
   dropdown: {
     backgroundColor: 'white',
     borderRadius: 8,

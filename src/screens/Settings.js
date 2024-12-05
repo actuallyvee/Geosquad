@@ -2,10 +2,13 @@ import React, {useContext} from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {Context as AuthContext} from '../context/AuthContext'
+import {Context as DataContext} from '../context/DataContext'
 
 const SettingsScreen = () => {
 
   const {signout} = useContext(AuthContext)
+  const {clear} = useContext(DataContext)
+  
 
   return (
     <LinearGradient
@@ -18,7 +21,7 @@ const SettingsScreen = () => {
         <View style={styles.topContainer}>
           <Text style={styles.title}>Settings</Text>
         </View>
-        <TouchableOpacity style={styles.signoutButton} onPress={() => {signout()}}>
+        <TouchableOpacity style={styles.signoutButton} onPress={() => {signout(clear)}}>
           <Text style={{color: "white", fontSize: 15}}>Sign Out</Text>
         </TouchableOpacity>
       </View>
