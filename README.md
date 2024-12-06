@@ -1,4 +1,4 @@
-# ![](safe.png)**_<ins>GeoSquad</ins>_**
+# ![](/assets/safe.png)**_<ins>GeoSquad</ins>_**
 Our Fall 2024 project for 4661 Mobile Application Development at the University of New Orleans!
 
 We made a GPS application designed to help civilians in war zones be safe.
