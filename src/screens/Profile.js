@@ -1,10 +1,19 @@
-import React, {useEffect, useContext} from "react";
-import { View, Text, StyleSheet, Image, Button } from "react-native";
+import React, { useContext } from "react";
+import { View, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import {Context as DataContext} from '../context/DataContext'
+import { Context as DataContext } from "../context/DataContext";
+
+// Helper function to capitalize the first letter of a string
+const capitalizeFirstLetter = (string) => {
+  if (!string) return "N/A";
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};
 
 const ProfileScreen = () => {
-  const {state} = useContext(DataContext)
+  const { state } = useContext(DataContext);
+
+  // Filter out entries made by the current user
+  const userEntries = state.entries.filter(entry => entry.userId !== state.user.id);
 
   return (
     <LinearGradient
@@ -20,7 +29,42 @@ const ProfileScreen = () => {
 
         <View style={styles.profileContainer}>
           <View style={styles.imagePlaceholder} />
-          <Text style={styles.name}>{state.user.firstName} {state.user.lastName}</Text>
+          <Text style={styles.name}>
+            {state.user.firstName} {state.user.lastName}
+          </Text>
+
+          {/* Additional Information Box */}
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>
+              <Text style={styles.label}>User Type:</Text>{" "}
+              {capitalizeFirstLetter(state.user.userType)}
+            </Text>
+            <Text style={styles.infoText}>
+              <Text style={styles.label}>Location:</Text>{" "}
+              {state.user.location || "N/A"}
+            </Text>
+            <Text style={styles.infoText}>
+              <Text style={styles.label}>Age:</Text> {state.user.age || "N/A"}
+            </Text>
+            <Text style={styles.infoText}>
+              <Text style={styles.label}>Birthday:</Text>{" "}
+              {state.user.birthday || "N/A"}
+            </Text>
+
+            {/* Entries Information */}
+            <Text style={styles.infoText}>
+              <Text style={styles.label}>Entries Made:</Text>{" "}
+            </Text>
+            {userEntries.length > 0 ? (
+              userEntries.map((entry, index) => (
+                <Text key={index} style={styles.entryText}>
+                  {state.user.firstName} {state.user.lastName} {entry.description} on {entry.date}.
+                </Text>
+              ))
+            ) : (
+              <Text style={styles.entryText}>No entries made yet.</Text>
+            )}
+          </View>
         </View>
       </View>
     </LinearGradient>
@@ -43,7 +87,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#F3FA12",
     marginLeft: 30,
-    alignSelf: 'flex-start'
+    alignSelf: "flex-start",
   },
   profileContainer: {
     alignItems: "center",
@@ -62,6 +106,28 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "white",
     fontWeight: "bold",
+  },
+  infoBox: {
+    marginTop: 20,
+    padding: 20,
+    backgroundColor: "#364E72",
+    borderRadius: 10,
+    width: "90%",
+    alignSelf: "center",
+  },
+  infoText: {
+    fontSize: 16,
+    color: "white",
+    marginBottom: 10,
+  },
+  label: {
+    fontWeight: "bold",
+    color: "#F3FA12",
+  },
+  entryText: {
+    fontSize: 16,
+    color: "white",
+    marginTop: -2,
   },
 });
 
