@@ -1,4 +1,4 @@
-# **_GeoSqad_**
+# **_GeoSquad_**
 Our Fall 2024 project for 4661 Mobile Application Development at the Univiersity of New Orleans!
 We decided on making a GPS application designed to help civilians in warzones be safe.
 
@@ -10,7 +10,7 @@ We decided on making a GPS application designed to help civilians in warzones be
 * Rima Murad [GitHub](https://github.com/Rima-Murad)
 * Victoria Pham [GitHub](https://github.com/actuallyvee)
 
->> Biggest shoutout to **Dr. Ben Samuel** for both being an _amazing_ professor and our beloved mentor through this project!
+> Biggest shoutout to **Dr. Ben Samuel** for both being an _amazing_ professor and our beloved mentor through this project!
 
 
 ## **<ins>Running the projects</ins>**
