@@ -72,7 +72,7 @@ const RegistrationScreen = (props) => {
 
     try {
       await signup({ email, password ,firstName, lastName, age, dob, gender, location, userType, squad}, fetchData)
-      if (userType === "creator") {
+      if (userType === "Creator") {
         Alert.alert(
           "Success",
           `Thank you for registering, Creator ${firstName}! Head to your squad!`,
@@ -83,10 +83,10 @@ const RegistrationScreen = (props) => {
             },
           ]
         );
-      } else if (userType === "user") {
+      } else if (userType === "User") {
         Alert.alert(
           "Success",
-          `Thank you for joining, User ${firstName}! Head to your squad!`,
+          `Thank you for joining, Member ${firstName}! Head to your squad!`,
           [
             {
               text: "OK",
@@ -214,8 +214,8 @@ const RegistrationScreen = (props) => {
             open={userTypeOpen}
             value={formData.userType}
             items={[
-              { label: "Squad Creator", value: "creator" },
-              { label: "Regular Member", value: "user" },
+              { label: "Squad Creator", value: "Creator" },
+              { label: "Regular Member", value: "Member" },
             ]}
             setOpen={setUserTypeOpen}
             onSelectItem={(item) => {
@@ -227,7 +227,7 @@ const RegistrationScreen = (props) => {
             textStyle={{ color: "#223148" }}
             dropDownContainerStyle={styles.dropdownContainer}
           />
-          {formData.userType === 'creator' ? 
+          {formData.userType === 'Creator' ? 
             <TextInput
               style={styles.input}
               placeholder="Squad Name"
@@ -237,7 +237,7 @@ const RegistrationScreen = (props) => {
             />:
             null
           }
-          {formData.userType === 'user' ? 
+          {formData.userType === 'User' ? 
             <TextInput
               style={styles.input}
               placeholder="Invitation Code"
