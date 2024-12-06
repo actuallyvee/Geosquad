@@ -11,7 +11,7 @@ We made a GPS application designed to help civilians in war zones be safe.
 * Rima Murad- [GitHub](https://github.com/Rima-Murad)
 * Victoria Pham- [GitHub](https://github.com/actuallyvee)
 
-Biggest shoutout to **Dr. Ben Samuel** for both being an _amazing_ professor and our beloved mentor for this project!
+Biggest shoutout to **Dr. Ben Samuel** for being both an _amazing_ professor and our beloved mentor for this project!
 
 
 ## **To Run the Project**
