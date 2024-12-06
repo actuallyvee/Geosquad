@@ -1,4 +1,4 @@
-# **_GeoSquad_**
+# **_<ins>GeoSquad</ins>_**
 Our Fall 2024 project for 4661 Mobile Application Development at the Univiersity of New Orleans!
 We decided on making a GPS application designed to help civilians in warzones be safe.
 
