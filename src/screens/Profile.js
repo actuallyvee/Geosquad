@@ -14,6 +14,7 @@ const ProfileScreen = () => {
 
   // Filter out entries made by the current user
   const userEntries = state.entries.filter(entry => entry.userId !== state.user.id);
+  console.log(userEntries)
 
   return (
     <LinearGradient
@@ -48,17 +49,17 @@ const ProfileScreen = () => {
             </Text>
             <Text style={styles.infoText}>
               <Text style={styles.label}>Birthday:</Text>{" "}
-              {state.user.birthday || "N/A"}
+              {state.user.dob || "N/A"}
             </Text>
 
             {/* Entries Information */}
             <Text style={styles.infoText}>
               <Text style={styles.label}>Entries Made:</Text>{" "}
             </Text>
-            {userEntries.length > 0 ? (
-              userEntries.map((entry, index) => (
+            {state.user.entries.length > 0 ? (
+              state.user.entries.map((entry, index) => (
                 <Text key={index} style={styles.entryText}>
-                  {state.user.firstName} {state.user.lastName} {entry.description} on {entry.date}.
+                  {state.user.firstName} {state.user.lastName} marked {entry.type} on {entry.date}.
                 </Text>
               ))
             ) : (
