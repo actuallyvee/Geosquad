@@ -5,11 +5,11 @@ We made a GPS application designed to help civilians in warzones be safe.
 
 
 ## **Group Members**
-* Safa Abdala [GitHub](https://github.com/sabdalah)
-* Jason Buras [GitHub](https://github.com/jasonBuras)
-* Johny Lopéz [GitHub](https://github.com/Johnysjr)
-* Rima Murad [GitHub](https://github.com/Rima-Murad)
-* Victoria Pham [GitHub](https://github.com/actuallyvee)
+* Safa Abdala- [GitHub](https://github.com/sabdalah)
+* Jason Buras- [GitHub](https://github.com/jasonBuras)
+* Johny Lopéz- [GitHub](https://github.com/Johnysjr)
+* Rima Murad- [GitHub](https://github.com/Rima-Murad)
+* Victoria Pham- [GitHub](https://github.com/actuallyvee)
 
 Biggest shoutout to **Dr. Ben Samuel** for both being an _amazing_ professor and our beloved mentor through this project!
 
