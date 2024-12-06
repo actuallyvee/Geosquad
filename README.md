@@ -1,6 +1,7 @@
 # **_<ins>GeoSquad</ins>_**
 Our Fall 2024 project for 4661 Mobile Application Development at the Univiersity of New Orleans!
-We decided on making a GPS application designed to help civilians in warzones be safe.
+
+We made a GPS application designed to help civilians in warzones be safe.
 
 
 ## **Group Members**
@@ -13,7 +14,7 @@ We decided on making a GPS application designed to help civilians in warzones be
 Biggest shoutout to **Dr. Ben Samuel** for both being an _amazing_ professor and our beloved mentor through this project!
 
 
-## **Running the projects**
+## **To Run the Project**
 ### With the terminal
 Use npm start in the terminal and scan the QR code with a mobile device. This QR code will redirect you to the Expo Go app.
 
