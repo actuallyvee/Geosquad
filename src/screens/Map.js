@@ -23,19 +23,37 @@ const MapScreen = () => {
   });
   const {state, addEntry, fetchEntries, removeEntry} = useContext(DataContext)
   
+
   useEffect(() => {
-    const getLocation = async () => {
+    let locationSubscription;
+    const startTrackingLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setError('Permission denied');
         return;
       }
-      let currentLocation = await Location.getCurrentPositionAsync({});
-      setLocation(currentLocation.coords);
+      locationSubscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 5000, // Update every 5 seconds
+          distanceInterval: 5, // Update if user moves 5 meters
+        },
+        (newLocation) => {
+          setLocation(newLocation.coords); // Update the location state
+        }
+      );
     };
-
-    getLocation();
+  
+    startTrackingLocation();
+  
+    return () => {
+      // Cleanup subscription when component unmounts
+      if (locationSubscription) {
+        locationSubscription.remove();
+      }
+    };
   }, []);
+  
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -93,11 +111,11 @@ const MapScreen = () => {
     <View style={styles.container}>
       <MapView
         style={styles.map}
-        initialRegion={{
+        region={{
           latitude: location.latitude,
           longitude: location.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+          latitudeDelta: 0.01, 
+          longitudeDelta: 0.01,
         }}
       >
         <Marker
@@ -108,42 +126,42 @@ const MapScreen = () => {
           title={"Your Location"}
           description={"This is your current location"}
         />
-
-      {state.entries.map(({ id, latitude, longitude, type, creator, creatorID,date }) => 
-        latitude && longitude && filterSettings[type] && ( 
-          <Marker
-            key={id} 
-            coordinate={{ latitude, longitude }}  
-            title={type} 
-            image={getIcon(type)} 
-          >
-            <Callout>
-              <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
-                {state.user._id === creatorID ? 
-                  <CalloutSubview
-                  style={{
-                    width: '100%',
-                    alignItems: 'center',
-                  }}
-                  onPress={() => { 
-                    removeEntry({id}) 
-                  }}
-                >
-                  <Text style={{ color: 'red' }}>REMOVE</Text>
-                </CalloutSubview> :
-                  <View></View>
-                }
-                
-                <View style={{ paddingTop: 20, alignItems: 'center' }}>
-                  <Text>This is a {type} zone.</Text>  
-                  <Text>Marked by {creator} on {date}.</Text>  
+        {state.entries.map(({ id, latitude, longitude, type, creator, creatorID, date }) =>
+          latitude &&
+          longitude &&
+          filterSettings[type] && (
+            <Marker
+              key={id}
+              coordinate={{ latitude, longitude }}
+              title={type}
+              image={getIcon(type)}
+            >
+              <Callout>
+                <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
+                  {state.user._id === creatorID ? (
+                    <CalloutSubview
+                      style={{
+                        width: '100%',
+                        alignItems: 'center',
+                      }}
+                      onPress={() => {
+                        removeEntry({ id });
+                      }}
+                    >
+                      <Text style={{ color: 'red' }}>REMOVE</Text>
+                    </CalloutSubview>
+                  ) : (
+                    <View></View>
+                  )}
+                  <View style={{ paddingTop: 20, alignItems: 'center' }}>
+                    <Text>This is a {type} zone.</Text>
+                    <Text>Marked by {creator} on {date}.</Text>
+                  </View>
                 </View>
-              </View>
-            </Callout>
-          </Marker>
-        )
-      )}
-
+              </Callout>
+            </Marker>
+          )
+        )}
       </MapView>
 
       <View style={{ position: 'absolute', top: 50, right: 10 }}>
@@ -208,8 +226,8 @@ const styles = StyleSheet.create({
     top: 90,
     right: 0,
     width: 200,
-    elevation: 5, // For Android shadow
-    shadowColor: '#000', // For iOS shadow
+    elevation: 5, 
+    shadowColor: '#000', 
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,

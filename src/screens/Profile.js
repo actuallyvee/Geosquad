@@ -3,7 +3,6 @@ import { View, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Context as DataContext } from "../context/DataContext";
 
-// Helper function to capitalize the first letter of a string
 const capitalizeFirstLetter = (string) => {
   if (!string) return "N/A";
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
@@ -11,10 +10,7 @@ const capitalizeFirstLetter = (string) => {
 
 const ProfileScreen = () => {
   const { state } = useContext(DataContext);
-
-  // Filter out entries made by the current user
-  const userEntries = state.entries.filter(entry => entry.userId !== state.user.id);
-  console.log(userEntries)
+  
 
   return (
     <LinearGradient

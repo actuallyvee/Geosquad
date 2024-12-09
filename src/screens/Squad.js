@@ -6,15 +6,13 @@ import defaultAvatar from "../../assets/default-avatar.jpg";
 
 const SquadScreen = () => {
   const { state } = useContext(DataContext);
-
   const members = Array.isArray(state.squad?.members) ? state.squad.members : [];
-
-  // Filter valid members based on existence of 'firstName' and 'lastName'
+  
   const validMembers = members.filter(
     (member) => member.firstName && member.lastName
   );
-
-  // Separate creator and regular members
+  
+  
   const squadCreator = validMembers.find(
     (member) => member.userType === "creator"
   );
