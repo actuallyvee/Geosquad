@@ -20,3 +20,7 @@ Use npm start in the terminal and scan the QR code with a mobile device. This QR
 
 ### With Android Studio
 Open project in Android Studio > add a device in the Device Manager > npm start in the Android Studio terminal > press "a" for Android.
+
+## Future Features
+* Calendar selection for Birthday in Registration screen
+* Arrow marker to return to position/location on Map screen
