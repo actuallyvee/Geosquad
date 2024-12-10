@@ -22,7 +22,6 @@ const MapScreen = () => {
     safe: true
   });
   const {state, addEntry, fetchEntries, removeEntry} = useContext(DataContext)
-  
 
   useEffect(() => {
     let locationSubscription;
@@ -43,9 +42,9 @@ const MapScreen = () => {
         }
       );
     };
-  
+
     startTrackingLocation();
-  
+
     return () => {
       // Cleanup subscription when component unmounts
       if (locationSubscription) {
@@ -53,7 +52,6 @@ const MapScreen = () => {
       }
     };
   }, []);
-  
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -96,7 +94,6 @@ const MapScreen = () => {
   if (!location) {
     return <Text>Loading...</Text>;
   }
-
 
   const getIcon = (type) =>  activateMarker[type]; 
 
@@ -195,7 +192,7 @@ const MapScreen = () => {
         )}
       </View>
 
-      <View style={{ position: 'absolute', bottom: 20, right: 10, gap: 10 }}>
+      <View style={styles.buttonContainer}>
         <MapButton title="ADD WATERWELL" icon={waterwell} onPress={() => toggleMarker('waterwell')} />
         <MapButton title="MARK DISASTER ZONE" icon={warning} onPress={() => toggleMarker('disaster')} />
         <MapButton title="ADD MEDICAL STATION" icon={medicalStation} onPress={() => toggleMarker('medicalStation')} />
@@ -223,11 +220,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     position: 'absolute',
-    top: 90,
+    top: 80, 
+    width: 180, 
     right: 0,
-    width: 200,
-    elevation: 5, 
-    shadowColor: '#000', 
+    elevation: 5,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -236,12 +233,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 6, 
   },
   dropdownLabel: {
-    fontSize: 16,
+    fontSize: 12, 
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 10, 
+    right: 10,
+    gap: 8, 
+  },
+  button: {
+    width: 110,
+    height: 40, 
   },
 });
-  // End Filter Style
 
 export default MapScreen;
