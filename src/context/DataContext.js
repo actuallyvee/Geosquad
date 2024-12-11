@@ -1,14 +1,31 @@
 import createDataContext from "./createDataContext";
 import trackerApi from '../api/tracker'
+import { act } from "react";
 
 const dataReducer = (state, action) => {
     switch (action.type) {
         case 'add_error':
             return {...state, errorMessage: action.payload}
         case 'fetchData':
-            return {user: action.payload.user, squad: action.payload.squad, errorMessage: "", entries: action.payload.entries}
+            const merged = [...state.entries, ...action.payload.entries].reduce((unique, entry) => {
+                // Ensure unique entries by ID
+                if (!unique.some((e) => e.id === entry.id)) {
+                    unique.push(entry);
+                }
+                return unique;
+            }, []);
+            return {user: action.payload.user, squad: action.payload.squad, errorMessage: "", entries: merged}
         case 'fetchEntries':
-            return {...state, entries: action.payload.entries, errorMessage: ""}
+            // console.log(action.payload.entries)
+            const mergedEntries = [...state.entries, ...action.payload.entries].reduce((unique, entry) => {
+                // Ensure unique entries by ID
+                if (!unique.some((e) => e.id === entry.id)) {
+                    unique.push(entry);
+                }
+                return unique;
+            }, []);
+            return { ...state, entries: mergedEntries, errorMessage: "" };
+            // return {...state, entries: action.payload.entries, errorMessage: ""}
         case 'signout':
             return {user: null, squad: null, errorMessage: '', entries: []}
         case 'addEntry': 
@@ -42,8 +59,39 @@ const fetchData = (dispatch) => {
     };
 };
 
+// const fetchEntries = (dispatch) => {
+//     return async () => {
+//       try {
+//         const userResponse = await trackerApi.get("/user");
+//         const response = await trackerApi.get("/markers", {
+//           params: { squadName: userResponse.data.squad },
+//         });
+  
+//         dispatch((state) => {
+//           const existingEntries = state.entries;
+//           const fetchedEntries = response.data;
+  
+//           // Merge local and fetched entries
+//           const mergedEntries = [...existingEntries, ...fetchedEntries].reduce((unique, entry) => {
+//             if (!unique.some((e) => e.id === entry.id)) {
+//               unique.push(entry);
+//             }
+//             return unique;
+//           }, []);
+  
+//           return { type: "fetchEntries", payload: { entries: mergedEntries } };
+//         });
+//       } catch (err) {
+//         dispatch({
+//           type: "add_error",
+//           payload: "Something went wrong with fetching",
+//         });
+//       }
+//     };
+//   };
+  
+
 const fetchEntries = (dispatch) => {
-    
     return async () => {
         try {
             const userResponse = await trackerApi.get("/user");

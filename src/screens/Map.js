@@ -21,44 +21,25 @@ const MapScreen = () => {
     medicalStation: true,
     safe: true
   });
-  const {state, addEntry, fetchEntries, removeEntry} = useContext(DataContext)
+  const {state, addEntry, fetchEntries, removeEntry, fetchData} = useContext(DataContext)
   
-
   useEffect(() => {
-    let locationSubscription;
-    const startTrackingLocation = async () => {
+    const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setError('Permission denied');
         return;
       }
-      locationSubscription = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 5000, // Update every 5 seconds
-          distanceInterval: 5, // Update if user moves 5 meters
-        },
-        (newLocation) => {
-          setLocation(newLocation.coords); // Update the location state
-        }
-      );
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      setLocation(currentLocation.coords);
     };
-  
-    startTrackingLocation();
-  
-    return () => {
-      // Cleanup subscription when component unmounts
-      if (locationSubscription) {
-        locationSubscription.remove();
-      }
-    };
-  }, []);
-  
 
+    getLocation();
+  }, []);
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchEntries()
-    }, 10000);
+      fetchData()
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -96,7 +77,6 @@ const MapScreen = () => {
   if (!location) {
     return <Text>Loading...</Text>;
   }
-
 
   const getIcon = (type) =>  activateMarker[type]; 
 
@@ -145,7 +125,7 @@ const MapScreen = () => {
                         alignItems: 'center',
                       }}
                       onPress={() => {
-                        removeEntry({ id });
+                        removeEntry({ id }, fetchData);
                       }}
                     >
                       <Text style={{ color: 'red' }}>REMOVE</Text>
@@ -195,7 +175,7 @@ const MapScreen = () => {
         )}
       </View>
 
-      <View style={{ position: 'absolute', bottom: 20, right: 10, gap: 10 }}>
+      <View style={styles.buttonContainer}>
         <MapButton title="ADD WATERWELL" icon={waterwell} onPress={() => toggleMarker('waterwell')} />
         <MapButton title="MARK DISASTER ZONE" icon={warning} onPress={() => toggleMarker('disaster')} />
         <MapButton title="ADD MEDICAL STATION" icon={medicalStation} onPress={() => toggleMarker('medicalStation')} />
@@ -223,11 +203,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     position: 'absolute',
-    top: 90,
+    top: 80, 
+    width: 180, 
     right: 0,
-    width: 200,
-    elevation: 5, 
-    shadowColor: '#000', 
+    elevation: 5,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -236,12 +216,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 6, 
   },
   dropdownLabel: {
-    fontSize: 16,
+    fontSize: 12, 
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 10, 
+    right: 10,
+    gap: 8, 
+  },
+  button: {
+    width: 110,
+    height: 40, 
   },
 });
-  // End Filter Style
 
 export default MapScreen;

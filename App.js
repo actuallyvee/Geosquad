@@ -19,6 +19,9 @@ import {Provider as AuthProvider} from './src/context/AuthContext'
 import {Provider as DataProvider} from './src/context/DataContext'
 import { setNavigator } from './src/utils/navigationRef';
 import ResolveAuthScreen from './src/screens/ResolveAuthScreen';
+import { LogBox } from 'react-native';
+
+LogBox.ignoreAllLogs();
 
 const switchNavigator = createSwitchNavigator({
     ResolveAuthScreen: ResolveAuthScreen,
