@@ -21,8 +21,10 @@ const MapScreen = () => {
     medicalStation: true,
     safe: true
   });
+
   const {state, addEntry, fetchEntries, removeEntry, fetchData} = useContext(DataContext)
   
+
   useEffect(() => {
     const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -33,7 +35,6 @@ const MapScreen = () => {
       let currentLocation = await Location.getCurrentPositionAsync({});
       setLocation(currentLocation.coords);
     };
-
     getLocation();
   }, []);
   useEffect(() => {
