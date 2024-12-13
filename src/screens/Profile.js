@@ -11,7 +11,6 @@ const capitalizeFirstLetter = (string) => {
 const ProfileScreen = () => {
   const { state } = useContext(DataContext);
   
-
   return (
     <LinearGradient
       colors={["#5377AE", "#4C6EA0", "#4A6B9C", "#364E72", "#223148"]}

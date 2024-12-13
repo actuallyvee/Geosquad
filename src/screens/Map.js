@@ -21,42 +21,26 @@ const MapScreen = () => {
     medicalStation: true,
     safe: true
   });
-  const {state, addEntry, fetchEntries, removeEntry} = useContext(DataContext)
+
+  const {state, addEntry, fetchEntries, removeEntry, fetchData} = useContext(DataContext)
+  
 
   useEffect(() => {
-    let locationSubscription;
-    const startTrackingLocation = async () => {
+    const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setError('Permission denied');
         return;
       }
-      locationSubscription = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 5000, // Update every 5 seconds
-          distanceInterval: 5, // Update if user moves 5 meters
-        },
-        (newLocation) => {
-          setLocation(newLocation.coords); // Update the location state
-        }
-      );
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      setLocation(currentLocation.coords);
     };
-
-    startTrackingLocation();
-
-    return () => {
-      // Cleanup subscription when component unmounts
-      if (locationSubscription) {
-        locationSubscription.remove();
-      }
-    };
+    getLocation();
   }, []);
-
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchEntries()
-    }, 10000);
+      fetchData()
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -142,7 +126,7 @@ const MapScreen = () => {
                         alignItems: 'center',
                       }}
                       onPress={() => {
-                        removeEntry({ id });
+                        removeEntry({ id }, fetchData);
                       }}
                     >
                       <Text style={{ color: 'red' }}>REMOVE</Text>
