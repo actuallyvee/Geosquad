@@ -7,7 +7,7 @@ We made a GPS application designed to help civilians in war zones be safe.
 ## **Group Members**
 * Safa Abdala- [GitHub](https://github.com/sabdalah)
 * Jason Buras- [GitHub](https://github.com/jasonBuras)
-* Johny Lopéz- [GitHub](https://github.com/Johnysjr)
+* Johny Lopéz- [GitHub](https://github.com/johnylopez)
 * Rima Murad- [GitHub](https://github.com/Rima-Murad)
 * Victoria Pham- [GitHub](https://github.com/actuallyvee)
 
